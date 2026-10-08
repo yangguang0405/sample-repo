@@ -8,8 +8,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 img, video { max-width: 100%; height: auto; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
 .container { width: 100%; max-width: 72rem; margin-inline: auto; padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
-.site-header { border-bottom: 1px solid #dce2ee; padding-top: env(safe-area-inset-top); }
+.site-header { border-bottom: 1px solid #e5e7eb; padding-top: env(safe-area-inset-top); }
+.header-content { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.5rem; }
 .brand { display: inline-flex; align-items: center; min-height: 4.5rem; font-weight: 750; text-decoration: none; }
+.language-switch { display: inline-flex; gap: 4px; overflow: hidden; border: 1px solid #d1d5db; border-radius: 8px; background: white; }
+.language-button { min-width: 44px; min-height: 44px; padding: .5rem .875rem; border: 0; background: transparent; color: var(--foreground); cursor: pointer; }
+.language-button[aria-pressed="true"] { background: #254bcc; color: white; }
 .main-content { padding-block: 2rem 4rem; }
 .hero { max-width: 48rem; padding-block: 2rem 3rem; }
 .eyebrow { color: var(--accent); font-weight: 700; }
@@ -22,8 +26,8 @@ p { overflow-wrap: anywhere; }
 .card-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 .card { min-width: 0; padding: 1.5rem; border: 1px solid #dce2ee; border-radius: 1rem; background: white; }
 .card p { margin-bottom: 0; }
-.site-footer { color: var(--muted); padding-bottom: max(2rem, env(safe-area-inset-bottom)); }
+.site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; color: var(--muted); padding-bottom: max(2rem, env(safe-area-inset-bottom)); }
 .skip-link { position: absolute; left: 1rem; top: -10rem; padding: .75rem; background: white; z-index: 10; }
 .skip-link:focus { top: 1rem; }
-@media (min-width: 48rem) { .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .hero { padding-block: 4rem; } }
+@media (min-width: 56.25rem) { .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .hero { padding-block: 4rem; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

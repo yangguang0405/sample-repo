@@ -1,5 +1,17 @@
 "use client";
 
+import { useLanguage } from "@/features/i18n/language-provider";
+
 export default function ErrorPage({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  return <section className="hero" role="alert"><h1>暂时无法加载</h1><p>请稍后重试。</p><button className="button" onClick={reset}>重试</button></section>;
+  const { messages } = useLanguage();
+
+  return (
+    <section className="hero" role="alert">
+      <h1>{messages.errorTitle}</h1>
+      <p>{messages.errorDescription}</p>
+      <button className="button" onClick={reset}>
+        {messages.retry}
+      </button>
+    </section>
+  );
 }
