@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Build, lint, types and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --engine-strict
+      - run: node --test .github/scripts/automation.test.cjs
+      - run: npm run build
+      - run: npm run lint
+      - run: npm run typecheck
+      # Deliberately fail if a required test suite has not been implemented.
+      - run: npm run test:unit
+      - run: npm run test:integration
+      - run: npm run test:e2e
+      - name: Preserve test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-evidence
+          path: |
+            coverage/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  qa:
+    needs: checks
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    uses: ./.github/workflows/codex-qa.yml
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+  review:
+    needs: qa
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    uses: ./.github/workflows/codex-review.yml
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+  gate:
+    name: Merge gate
+    if: always()
+    needs: [checks, qa, review]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every applicable stage to pass
+        env:
+          CHECKS: ${{ needs.checks.result }}
+          QA: ${{ needs.qa.result }}
+          REVIEW: ${{ needs.review.result }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          test "$CHECKS" = success
+          if [ "$EVENT" = pull_request ]; then
+            test "$QA" = success
+            test "$REVIEW" = success
+          fi
