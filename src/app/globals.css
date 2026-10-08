@@ -1,0 +1,29 @@
+ :root { color-scheme: light; --background: #f5f7fb; --foreground: #182337; --muted: #526078; --accent: #254fc4; }
+* { box-sizing: border-box; }
+html { scroll-padding-top: 2rem; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; background: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; -webkit-text-size-adjust: 100%; }
+a { color: inherit; text-underline-offset: .2em; }
+button, input, select, textarea { font: inherit; font-size: 1rem; }
+button, a { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+.container { width: 100%; max-width: 72rem; margin-inline: auto; padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
+.site-header { border-bottom: 1px solid #dce2ee; padding-top: env(safe-area-inset-top); }
+.brand { display: inline-flex; align-items: center; min-height: 4.5rem; font-weight: 750; text-decoration: none; }
+.main-content { padding-block: 2rem 4rem; }
+.hero { max-width: 48rem; padding-block: 2rem 3rem; }
+.eyebrow { color: var(--accent); font-weight: 700; }
+h1 { font-size: clamp(2rem, 6vw, 4rem); line-height: 1.2; letter-spacing: -.035em; margin-block: 1rem; overflow-wrap: anywhere; }
+h2 { font-size: 1.2rem; margin-top: 0; }
+p { overflow-wrap: anywhere; }
+.lead, .card p { color: var(--muted); }
+.lead { font-size: 1.125rem; }
+.button { display: inline-flex; gap: 1rem; align-items: center; justify-content: center; min-height: 48px; padding: .75rem 1.25rem; border-radius: .75rem; background: var(--accent); color: white; text-decoration: none; font-weight: 650; border: 0; cursor: pointer; }
+.card-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.card { min-width: 0; padding: 1.5rem; border: 1px solid #dce2ee; border-radius: 1rem; background: white; }
+.card p { margin-bottom: 0; }
+.site-footer { color: var(--muted); padding-bottom: max(2rem, env(safe-area-inset-bottom)); }
+.skip-link { position: absolute; left: 1rem; top: -10rem; padding: .75rem; background: white; z-index: 10; }
+.skip-link:focus { top: 1rem; }
+@media (min-width: 48rem) { .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .hero { padding-block: 4rem; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
