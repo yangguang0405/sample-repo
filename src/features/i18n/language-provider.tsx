@@ -16,17 +16,26 @@ import {
   type Language,
 } from "./language";
 
-const LanguageContext = createContext<Language>("zh");
+type LanguageContextValue = {
+  language: Language;
+  setLanguage: (language: Language) => void;
+};
+
+const LanguageContext = createContext<LanguageContextValue>({
+  language: "zh",
+  setLanguage: () => {},
+});
 let inMemoryLanguage: Language = "zh";
+let hasUnsavedLanguagePreference = false;
 
 function getLanguageSnapshot(): Language {
+  if (hasUnsavedLanguagePreference) {
+    return inMemoryLanguage;
+  }
+
   try {
     const storedLanguage = window.localStorage.getItem(languageStorageKey);
-    if (isLanguage(storedLanguage)) {
-      inMemoryLanguage = storedLanguage;
-    } else {
-      inMemoryLanguage = "zh";
-    }
+    inMemoryLanguage = isLanguage(storedLanguage) ? storedLanguage : "zh";
   } catch {
     return inMemoryLanguage;
   }
@@ -39,12 +48,19 @@ function getServerLanguageSnapshot(): Language {
 }
 
 function subscribeToLanguageChange(onChange: () => void) {
+  const handleStorageChange = (event: StorageEvent) => {
+    if (event.key === languageStorageKey || event.key === null) {
+      hasUnsavedLanguagePreference = false;
+      onChange();
+    }
+  };
+
   window.addEventListener(languageChangeEvent, onChange);
-  window.addEventListener("storage", onChange);
+  window.addEventListener("storage", handleStorageChange);
 
   return () => {
     window.removeEventListener(languageChangeEvent, onChange);
-    window.removeEventListener("storage", onChange);
+    window.removeEventListener("storage", handleStorageChange);
   };
 }
 
@@ -56,6 +72,18 @@ export function LanguageProvider({
     getLanguageSnapshot,
     getServerLanguageSnapshot,
   );
+  const setLanguage = useCallback((nextLanguage: Language) => {
+    inMemoryLanguage = nextLanguage;
+    try {
+      window.localStorage.setItem(languageStorageKey, nextLanguage);
+      hasUnsavedLanguagePreference = false;
+    } catch {
+      // Keep the selection active for this page when storage is unavailable.
+      hasUnsavedLanguagePreference = true;
+    }
+
+    window.dispatchEvent(new Event(languageChangeEvent));
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
@@ -66,24 +94,14 @@ export function LanguageProvider({
   }, [language]);
 
   return (
-    <LanguageContext.Provider value={language}>
+    <LanguageContext.Provider value={{ language, setLanguage }}>
       {children}
     </LanguageContext.Provider>
   );
 }
 
 export function useLanguage() {
-  const language = useContext(LanguageContext);
-  const setLanguage = useCallback((nextLanguage: Language) => {
-    inMemoryLanguage = nextLanguage;
-    try {
-      window.localStorage.setItem(languageStorageKey, nextLanguage);
-    } catch {
-      // Keep the selection active for this page when storage is unavailable.
-    }
-
-    window.dispatchEvent(new Event(languageChangeEvent));
-  }, []);
+  const { language, setLanguage } = useContext(LanguageContext);
 
   return useMemo(
     () => ({ language, messages: messages[language], setLanguage }),

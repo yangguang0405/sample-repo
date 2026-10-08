@@ -34,6 +34,13 @@ export const messages = {
     ],
     footer: "为每一块屏幕设计。",
     copyright: "保留所有权利。",
+    notFoundTitle: "页面不存在",
+    notFoundDescription: "请检查地址，或返回首页继续浏览。",
+    goHome: "返回首页",
+    errorTitle: "暂时无法加载",
+    errorDescription: "请稍后重试。",
+    retry: "重试",
+    loading: "正在加载…",
   },
   en: {
     pageTitle: "Web App",
@@ -66,6 +73,13 @@ export const messages = {
     ],
     footer: "Designed for every screen.",
     copyright: "All rights reserved.",
+    notFoundTitle: "Page not found",
+    notFoundDescription: "Check the address or return to the home page.",
+    goHome: "Back to home",
+    errorTitle: "Unable to load this page",
+    errorDescription: "Please try again in a moment.",
+    retry: "Try again",
+    loading: "Loading…",
   },
 } satisfies Record<Language, object>;
 
