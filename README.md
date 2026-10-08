@@ -11,7 +11,8 @@ npm run dev
 ```
 
 访问 http://localhost:3000 。健康检查接口：`GET /api/health`。
-使用满足 package.json engines 的 Node.js；部署时优先使用受支持的 LTS。
+使用 Node.js 20.19.0 或更高版本（当前锁定的 ESLint 工具链依赖该下限）。
+部署时优先使用受支持的 LTS。
 
 ## 检查与生产运行
 

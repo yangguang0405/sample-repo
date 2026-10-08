@@ -11,7 +11,7 @@
     "check": "npm run lint && npm run typecheck"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=20.19.0"
   },
   "dependencies": {
     "next": "^16.4.0",
